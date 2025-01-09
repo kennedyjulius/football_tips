@@ -1,0 +1,87 @@
+{
+  "project_info": {
+    "project_number": "788238904887",
+    "firebase_url": "https://soccertips-30915-default-rtdb.firebaseio.com",
+    "project_id": "soccertips-30915",
+    "storage_bucket": "soccertips-30915.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788238904887:android:940b8cafac16b8cbf319b2",
+        "android_client_info": {
+          "package_name": "com.example.football_tips"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDiT-vjY9UQqsdOAM38-_PSGZx3sLANmY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788238904887:android:a0a4baf3b89d21e3f319b2",
+        "android_client_info": {
+          "package_name": "com.mchumasoftwares.bet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDiT-vjY9UQqsdOAM38-_PSGZx3sLANmY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788238904887:android:eab0276e102d42f5f319b2",
+        "android_client_info": {
+          "package_name": "com.mchumasoftwares.soccer_tips"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDiT-vjY9UQqsdOAM38-_PSGZx3sLANmY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788238904887:android:e497e86373561793f319b2",
+        "android_client_info": {
+          "package_name": "com.mchumasoftwares.worldclasstips"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDiT-vjY9UQqsdOAM38-_PSGZx3sLANmY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
