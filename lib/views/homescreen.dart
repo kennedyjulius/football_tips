@@ -2,119 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:football_tips/models/model_tips.dart';
+import 'package:football_tips/views/marque_banner.dart';
 import 'dart:ui';
+
+import 'package:football_tips/views/matchtip_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   // Constructor removed as we will be using StreamBuilder to fetch data.
   const HomeScreen({Key? key, required List freeTips, required bool isLoading}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.blue.shade900,
-              Colors.purple.shade900,
-            ],
-          ),
-        ),
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              expandedHeight: 200,
-              floating: false,
-              pinned: true,
-              flexibleSpace: FlexibleSpaceBar(
-                title: const Text(''),
-                background: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.blue.shade900,
-                        Colors.purple.shade900,
-                      ],
-                    ),
-                  ),
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        child: ShaderMask(
-                          shaderCallback: (rect) {
-                            return LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.black, Colors.black.withOpacity(0)],
-                            ).createShader(rect);
-                          },
-                          blendMode: BlendMode.dstIn,
-                          child: Image.asset(
-                            'assets/betting2.png',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('free')  // Stream from Firestore collection
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return const Center(child: Text("Error fetching data"));
-                        } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                          return const Center(child: Text("No tips available"));
-                        } else {
-                          final List<Tip> freeTips = snapshot.data!.docs
-                              .map((doc) => Tip.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>)) // Assuming a Tip.fromFirestore constructor
-                              .toList();
-                          return Column(
-                            children: [
-                              SizedBox(
-                                height: 220,
-                                child: PageView.builder(
-                                  itemCount: freeTips.length,
-                                  scrollBehavior: MaterialScrollBehavior(),
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (context, index) {
-                                    return _buildTipCard(freeTips[index], true);
-                                  },
-                                  // child: _buildTipCard(freeTips[0], true)
-                                  ),
-                              ),
-                              const SizedBox(height: 16),
-                              _buildPremiumPreview(),
-                              const SizedBox(height: 16),
-                              ...freeTips.skip(1).map((tip) => _buildTipCard(tip, false)),
-                            ],
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildTipCard(Tip tip, bool isHighlighted) {
     return Container(
@@ -389,6 +284,128 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.blue.shade900,
+              Colors.purple.shade900,
+            ],
+          ),
+        ),
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 200,
+              floating: false,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                title: CurvedOscillatingMarquee(text: "Pro betting tips available at 0743702820"),
+                background: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.blue.shade900,
+                        Colors.purple.shade900,
+                      ],
+                    ),
+                  ),
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: ShaderMask(
+                          shaderCallback: (rect) {
+                            return LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.black, Colors.black.withOpacity(0)],
+                            ).createShader(rect);
+                          },
+                          blendMode: BlendMode.dstIn,
+                          child: Image.asset(
+                            'assets/betting2.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('free')  // Stream from Firestore collection
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return const Center(child: Text("Error fetching data"));
+                        } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                          return const Center(child: Text("No tips available"));
+                        } else {
+                          final List<Tip> freeTips = snapshot.data!.docs
+                              .map((doc) => Tip.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>)) // Assuming a Tip.fromFirestore constructor
+                              .toList();
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: 220,
+                                child: PageView.builder(
+                                  itemCount: freeTips.length,
+                                  scrollBehavior: MaterialScrollBehavior(),
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    return _buildTipCard(freeTips[index], true);
+                                  },
+                                  // child: _buildTipCard(freeTips[0], true)
+                                  ),
+                              ),
+                              const SizedBox(height: 16),
+                              _buildPremiumPreview(),
+                              const SizedBox(height: 16),
+                              //...freeTips.skip(1).map((tip) => _buildTipCard(tip, false)),
+                              Container(
+                                height: 300,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20)
+                                  )
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: MatchTipsScreen(),
+                                ),
+                              )
+                            ],
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
