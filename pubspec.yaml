@@ -35,6 +35,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_screenutil: ^5.9.3
+  flutter_staggered_animations: ^1.1.1
 
 dev_dependencies:
   flutter_lints: ^5.0.0

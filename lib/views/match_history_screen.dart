@@ -1,27 +1,31 @@
 import 'package:flutter/material.dart';
 
-class MatchHistoryScreen extends StatefulWidget {
-  const MatchHistoryScreen({super.key});
+class HistoryScreen extends StatefulWidget {
+  const HistoryScreen({super.key});
 
   @override
-  State<MatchHistoryScreen> createState() => _MatchHistoryScreenState();
+  State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
-class _MatchHistoryScreenState extends State<MatchHistoryScreen> with SingleTickerProviderStateMixin {
+class _HistoryScreenState extends State<HistoryScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final List<String> _filters = ['All', 'Wins', 'Losses'];
-  String _selectedFilter = 'All';
+  final Map<String, String> _categories = {
+    'all': 'All History',
+    'premium': 'Premium',
+    'draws': 'Draws',
+    'daily': 'Daily',
+    'htft': 'HT/FT',
+    'epl': 'EPL',
+  };
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+    _tabController = TabController(
+      length: _categories.length,
+      vsync: this,
+    );
   }
 
   @override
@@ -29,96 +33,35 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> with SingleTick
     return Scaffold(
       appBar: AppBar(
         title: const Text('Betting History'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(110),
-          child: Column(
-            children: [
-              _buildStatisticsBar(),
-              _buildFilterChips(),
-            ],
-          ),
+        bottom: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: _categories.values
+              .map((category) => Tab(text: category))
+              .toList(),
         ),
       ),
-      body: _buildHistoryList(),
-    );
-  }
-
-  Widget _buildStatisticsBar() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).primaryColor.withOpacity(0.1),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildStatItem('Total Tips', '156', Colors.blue),
-          _buildStatItem('Win Rate', '68%', Colors.green),
-          _buildStatItem('ROI', '+12.5%', Colors.orange),
-        ],
+      body: TabBarView(
+        controller: _tabController,
+        children: _categories.keys
+            .map((category) => _buildHistoryList(category))
+            .toList(),
       ),
     );
   }
 
-  Widget _buildStatItem(String label, String value, Color color) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFilterChips() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: _filters.map((filter) {
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ChoiceChip(
-              label: Text(filter),
-              selected: _selectedFilter == filter,
-              onSelected: (selected) {
-                if (selected) {
-                  setState(() => _selectedFilter = filter);
-                }
-              },
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildHistoryList() {
+  Widget _buildHistoryList(String category) {
     return ListView.builder(
-      itemCount: 20, // Replace with actual data length
+      itemCount: 20,
       itemBuilder: (context, index) {
-        return _buildHistoryItem(index);
+        return _buildHistoryItem(index, category);
       },
     );
   }
 
-  Widget _buildHistoryItem(int index) {
-    // Sample data - replace with actual data from your database
+  Widget _buildHistoryItem(int index, String category) {
     final bool isWin = index % 3 != 0;
-    final double odds = 1.75 + (index % 5) * 0.25;
-    final double stake = 10.0;
-    final double profit = isWin ? stake * (odds - 1) : -stake;
-
+    
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ExpansionTile(
@@ -130,30 +73,21 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> with SingleTick
           ),
         ),
         title: Text(
-          'Manchester United vs Chelsea',
+          'Match #${index + 1}',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isWin ? Colors.green : Colors.red,
           ),
         ),
-        subtitle: Text(
-          'Premier League • ${DateTime.now().subtract(Duration(days: index)).toString().split(' ')[0]}',
-        ),
+        subtitle: Text('$category • ${DateTime.now().toString().split(' ')[0]}'),
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _buildDetailRow('Prediction', 'Over 2.5 Goals'),
-                _buildDetailRow('Odds', odds.toStringAsFixed(2)),
-                _buildDetailRow('Stake', '\$${stake.toStringAsFixed(2)}'),
-                _buildDetailRow(
-                  'Profit/Loss',
-                  '${profit >= 0 ? '+' : ''}\$${profit.toStringAsFixed(2)}',
-                  profit >= 0 ? Colors.green : Colors.red,
-                ),
-                const SizedBox(height: 8),
-                _buildMatchResult('Final Score: 2-1'),
+                _buildDetailRow('Prediction', 'Over 2.5'),
+                _buildDetailRow('Odds', '1.95'),
+                _buildDetailRow('Result', isWin ? 'Won' : 'Lost'),
               ],
             ),
           ),
@@ -162,55 +96,19 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> with SingleTick
     );
   }
 
-  Widget _buildDetailRow(String label, String value, [Color? valueColor]) {
+  Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 14,
-            ),
-          ),
+          Text(label),
           Text(
             value,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: valueColor,
-              fontSize: 14,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildMatchResult(String result) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        result,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  // Add this method to your HomeScreen to enable navigation
-  void navigateToHistory(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const MatchHistoryScreen()),
     );
   }
 }
