@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 
 class VIPServicesScreen extends StatelessWidget {
-  const VIPServicesScreen({Key? key}) : super(key: key);
+  const VIPServicesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

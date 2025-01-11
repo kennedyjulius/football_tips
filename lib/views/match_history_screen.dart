@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MatchHistoryScreen extends StatefulWidget {
-  const MatchHistoryScreen({Key? key}) : super(key: key);
+  const MatchHistoryScreen({super.key});
 
   @override
   State<MatchHistoryScreen> createState() => _MatchHistoryScreenState();

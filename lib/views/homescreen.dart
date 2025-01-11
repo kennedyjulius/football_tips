@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:football_tips/services/firebase_firestore.dart';
 import 'package:football_tips/views/match_history_screen.dart';
 import 'package:football_tips/views/vipservices_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -11,13 +13,40 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+ 
 
   // Store the navigation history to maintain state
   final List<Widget> _screens = [
-    const HomeTab(),
+    const HomeTab(isLoading: false,dailyTips: [],),
     const VIPServicesScreen(),
     const MatchHistoryScreen(),
   ];
+  final FirestoreService _firestoreService = FirestoreService();
+  List<Map<String, dynamic>> _dailyTips = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    _fetchDailyTips();
+    super.initState();
+  }
+
+  Future<void> _fetchDailyTips() async {
+    try {
+      final tips = await _firestoreService.getDailyTips();
+      setState(() {
+        _dailyTips = tips;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load tips: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +83,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // Home Tab - Contains the original home screen content
 class HomeTab extends StatelessWidget {
-  const HomeTab({Key? key}) : super(key: key);
+  final bool isLoading;
+  final List<dynamic> dailyTips;
+  const HomeTab({super.key, required this.isLoading, required this.dailyTips});
 
   @override
   Widget build(BuildContext context) {
@@ -146,35 +177,43 @@ class HomeTab extends StatelessWidget {
         ),
 
         // Free Tips Section
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Today\'s Free Tips',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const SizedBox(height: 16),
-                _buildFreeTipCard(
-                  'Manchester United vs Chelsea',
-                  'Premier League',
-                  'Over 2.5 Goals',
-                  '19:45',
-                  0.85,
-                ),
-                _buildFreeTipCard(
-                  'Real Madrid vs Barcelona',
-                  'La Liga',
-                  'Both Teams to Score',
-                  '20:00',
-                  0.75,
-                ),
-              ],
-            ),
-          ),
+       SliverToBoxAdapter(
+  child: Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section Header
+        Text(
+          'Today\'s Free Tips',
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
+        const SizedBox(height: 16),
+
+        // Conditional UI based on loading state
+        isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : dailyTips.isEmpty
+                ? const Center(
+                    child: Text('No tips available today.'),
+                  )
+                : Column(
+                    // Dynamically generate cards for tips
+                    children: dailyTips.map((tip) {
+                      return _buildFreeTipCard(
+                        tip['team_1'] ?? 'Unknown Team',
+                        tip['league_name'] ?? 'Unknown League',
+                        tip['tips_name'] ?? 'No Prediction',
+                        tip['time'] ?? 'TBD',
+                        double.tryParse(tip['odds'] ?? '0') ?? 0,
+                      );
+                    }).toList(),
+                  ),
+      ],
+    ),
+  ),
+),
+
 
         // Match History Section Preview
         SliverList(

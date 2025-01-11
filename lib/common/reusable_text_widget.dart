@@ -8,13 +8,13 @@ class ReusableText extends StatelessWidget {
   final TextAlign textAlign;
 
   const ReusableText({
-    Key? key,
+    super.key,
     required this.text,
     this.fontSize = 16.0,
     this.color = Colors.black,
     this.fontWeight = FontWeight.normal,
     this.textAlign = TextAlign.start,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
