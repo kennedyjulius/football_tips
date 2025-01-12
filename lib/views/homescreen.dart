@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:football_tips/common/custom_app_bar.dart';
+import 'package:football_tips/common/custom_rowbutton.dart';
 import 'package:football_tips/models/model_tips.dart';
+import 'package:football_tips/utils/app_constants.dart';
 import 'package:football_tips/views/marque_banner.dart';
 import 'dart:ui';
 
@@ -296,54 +299,116 @@ class HomeScreen extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.blue.shade900,
-              Colors.purple.shade900,
+              Colors.white,
+              Colors.grey.shade100,
             ],
           ),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            bottomRight: Radius.circular(20)
+          )
         ),
         child: CustomScrollView(
           slivers: [
-            SliverAppBar(
-              expandedHeight: 200,
-              floating: false,
-              pinned: true,
-              flexibleSpace: FlexibleSpaceBar(
-                title: CurvedOscillatingMarquee(text: "Pro betting tips available at 0743702820"),
-                background: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.blue.shade900,
-                        Colors.purple.shade900,
-                      ],
-                    ),
+                  SliverAppBar(
+            expandedHeight: 50, // Adjust based on your preference
+            floating: false,
+            pinned: true,
+            // title: Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     Row(
+            //       children: [
+            //         // Profile Circle Avatar
+            //         // CircleAvatar(
+            //         //   radius: 25,
+            //         //   backgroundColor: Colors.grey.shade300,
+            //         //   backgroundImage: const NetworkImage(
+            //         //     "https://d326fntlu7tb1e.cloudfront.net/uploads/bdec9d7d-0544-4fc4-823d-3b898f6dbbbf",
+            //         //   ),
+            //         // ),
+            //         const SizedBox(width: 12), // Space between avatar and text
+            //         Padding(
+            //           padding: const EdgeInsets.only(bottom: 6),
+            //           child: Column(
+            //             mainAxisAlignment: MainAxisAlignment.center,
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             children: [
+            //               // First line of text
+            //               const Text(
+            //                 "Deliver to",
+            //                 style: TextStyle(
+            //                   fontSize: 13,
+            //                   color: Colors.black, // Adjust based on your theme
+            //                   fontWeight: FontWeight.w600,
+            //                 ),
+            //               ),
+            //               // Second line of text (dynamic)
+            //               SizedBox(
+            //                 width: width * 0.65,
+            //                 child: const Text(
+            //                   "Hello there", // Replace with dynamic content if needed
+            //                   style: TextStyle(
+            //                     fontSize: 11,
+            //                     color: Colors.grey,
+            //                     fontWeight: FontWeight.normal,
+            //                   ),
+            //                   overflow: TextOverflow.ellipsis,
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ],
+            // ),
+            flexibleSpace: FlexibleSpaceBar(
+              // title: const Text(
+              //   "Pro betting tips available at 0743702820",
+              //   style: TextStyle(fontSize: 24, color: kLightWhite, fontWeight: FontWeight.bold),
+              // ),
+              background: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue.shade900,
+                      Colors.purple.shade900,
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        child: ShaderMask(
-                          shaderCallback: (rect) {
-                            return LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.black, Colors.black.withOpacity(0)],
-                            ).createShader(rect);
-                          },
-                          blendMode: BlendMode.dstIn,
-                          child: Image.asset(
-                            'assets/betting2.png',
-                            fit: BoxFit.cover,
-                          ),
+                ),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: ShaderMask(
+                        shaderCallback: (rect) {
+                          return LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.black, Colors.black.withOpacity(0)],
+                          ).createShader(rect);
+                        },
+                        blendMode: BlendMode.dstIn,
+                        child: Image.asset(
+                          'assets/betting2.png', // Replace with your asset path
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
+          ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 5.0,
+                  horizontal: 12
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -364,6 +429,11 @@ class HomeScreen extends StatelessWidget {
                               .toList();
                           return Column(
                             children: [
+                              RowWithButton(
+                                startText: "Free Hot Tips", buttonText: "More ...", onButtonPressed: () {
+                                
+                              },),
+                              SizedBox(height: 2,),
                               SizedBox(
                                 height: 220,
                                 child: PageView.builder(
@@ -378,10 +448,15 @@ class HomeScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 16),
                               _buildPremiumPreview(),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 6),
                               //...freeTips.skip(1).map((tip) => _buildTipCard(tip, false)),
+                               RowWithButton(
+                                startText: "Daily Hot Tips", buttonText: "view ...", onButtonPressed: () {
+                                
+                              },),
+                              SizedBox(height: 10,),
                               Container(
-                                height: 300,
+                                height: 230,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.only(
