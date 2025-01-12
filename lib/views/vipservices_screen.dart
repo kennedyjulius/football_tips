@@ -17,11 +17,11 @@ class PremiumFeaturesScreen extends StatelessWidget {
               title: const Text('Premium Features'),
               background: Container(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.purple.shade900, Colors.blue.shade900],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  // gradient: LinearGradient(
+                  //   colors: [Colors.purple.shade900, Colors.blue.shade900],
+                  //   begin: Alignment.topLeft,
+                  //   end: Alignment.bottomRight,
+                  // ),
                 ),
                 child: Stack(
                   children: [
@@ -29,18 +29,18 @@ class PremiumFeaturesScreen extends StatelessWidget {
                       child: Opacity(
                         opacity: 0.2,
                         child: Image.asset(
-                          'assets/premium_background.jpg',
+                          'assets/premiumservice2.png',
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    Center(
-                      child: Icon(
-                        Icons.diamond,
-                        size: 80,
-                        color: Colors.white.withOpacity(0.7),
-                      ),
-                    ),
+                    // Center(
+                    //   child: Icon(
+                    //     Icons.diamond,
+                    //     size: 80,
+                    //     color: Colors.white.withOpacity(0.7),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

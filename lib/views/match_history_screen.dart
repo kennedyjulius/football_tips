@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:football_tips/models/model_tips.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -10,13 +12,14 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+
   final Map<String, String> _categories = {
     'all': 'All History',
-    'premium': 'Premium',
-    'draws': 'Draws',
-    'daily': 'Daily',
-    'htft': 'HT/FT',
-    'epl': 'EPL',
+    'premium_history': 'Premium',
+    'draws_history': 'Draws',
+    'daily_history': 'Daily',
+    'htft_history': 'HT/FT',
+    'epl_history': 'EPL',
   };
 
   @override
@@ -44,24 +47,91 @@ class _HistoryScreenState extends State<HistoryScreen>
       body: TabBarView(
         controller: _tabController,
         children: _categories.keys
-            .map((category) => _buildHistoryList(category))
+            .map((category) => _buildCategoryHistoryList(category))
             .toList(),
       ),
     );
   }
 
-  Widget _buildHistoryList(String category) {
-    return ListView.builder(
-      itemCount: 20,
-      itemBuilder: (context, index) {
-        return _buildHistoryItem(index, category);
+  Widget _buildCategoryHistoryList(String category) {
+    if (category == 'all') {
+      return _buildAllHistoryList(); // Special handling for "all"
+    } else {
+      return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection(category).snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text("Error fetching data"));
+          } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(
+                child: Text("No data available for ${_categories[category]}"));
+          } else {
+            final categoryTips = snapshot.data!.docs.map((doc) {
+              return Tip.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>); // Map Firestore data to Tip model
+            }).toList();
+
+            return ListView.builder(
+              itemCount: categoryTips.length,
+              itemBuilder: (context, index) {
+                return _buildHistoryItem(categoryTips[index]);
+              },
+            );
+          }
+        },
+      );
+    }
+  }
+
+  Widget _buildAllHistoryList() {
+    return FutureBuilder<List<Tip>>(
+      future: _fetchAllHistoryData(), // Fetch all category data
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text("Error fetching data"));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text("No data available"));
+        } else {
+          final allTips = snapshot.data!;
+          return ListView.builder(
+            itemCount: allTips.length,
+            itemBuilder: (context, index) {
+              return _buildHistoryItem(allTips[index]);
+            },
+          );
+        }
       },
     );
   }
 
-  Widget _buildHistoryItem(int index, String category) {
-    final bool isWin = index % 3 != 0;
-    
+  Future<List<Tip>> _fetchAllHistoryData() async {
+    final List<String> collections = [
+      'premium_history',
+      'draws_history',
+      'daily_history',
+      'htft_history',
+      'epl_history',
+    ];
+
+    List<Tip> allTips = [];
+    for (String collection in collections) {
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection(collection).get();
+      final categoryTips = querySnapshot.docs
+          .map((doc) => Tip.fromFirestore(doc)) // Map to Tip model
+          .toList();
+      allTips.addAll(categoryTips);
+    }
+
+    return allTips;
+  }
+
+  Widget _buildHistoryItem(Tip tip) {
+    final bool isWin = tip.status == 'check'; // Assuming 'results' indicates win/loss
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ExpansionTile(
@@ -73,21 +143,21 @@ class _HistoryScreenState extends State<HistoryScreen>
           ),
         ),
         title: Text(
-          'Match #${index + 1}',
+          '${tip.team1} vs ${tip.team2}',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isWin ? Colors.green : Colors.red,
           ),
         ),
-        subtitle: Text('$category • ${DateTime.now().toString().split(' ')[0]}'),
+        subtitle: Text('${tip.date} • ${tip.leagueName}'),
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _buildDetailRow('Prediction', 'Over 2.5'),
-                _buildDetailRow('Odds', '1.95'),
-                _buildDetailRow('Result', isWin ? 'Won' : 'Lost'),
+                _buildDetailRow('Prediction', tip.tipsName),
+                _buildDetailRow('Odds', tip.odds),
+                _buildDetailRow('Result', tip.results),
               ],
             ),
           ),
