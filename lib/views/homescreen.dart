@@ -1,6 +1,11 @@
+import 'dart:async';
+
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:football_tips/common/carousel_widget.dart';
 import 'package:football_tips/common/custom_app_bar.dart';
 import 'package:football_tips/common/custom_rowbutton.dart';
 import 'package:football_tips/models/model_tips.dart';
@@ -10,164 +15,52 @@ import 'dart:ui';
 
 import 'package:football_tips/views/matchtip_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   // Constructor removed as we will be using StreamBuilder to fetch data.
-  const HomeScreen({Key? key, required List freeTips, required bool isLoading}) : super(key: key);
+  const HomeScreen({Key? key, required List freeTips, required bool isLoading})
+      : super(key: key);
 
-  Widget _buildTipCard(Tip tip, bool isHighlighted) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: isHighlighted
-                    ? [Colors.orange.shade900, Colors.red.shade900]
-                    : [Colors.white10, Colors.white12],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: isHighlighted
-                      ? Colors.orange.withOpacity(0.3)
-                      : Colors.black.withOpacity(0.2),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                                  'Tip Date: ${tip.date}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                  ),
-                                ),
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
-                            SizedBox(height: 3,),
-                            Text(
-                                  'Tip Name: ${tip.tipsName}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              '${tip.team1} vs ${tip.team2}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: isHighlighted ? 18 : 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.green.shade400,
-                                  Colors.green.shade700,
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              tip.odds,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.tips_and_updates,
-                              color: Colors.orange.shade400,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Tip Status: ${tip.status}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                              ),
-                            ),
-                            SizedBox(width: 10,),
-                            Text(
-                                  'Tip Results: ${tip.results}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          if (isHighlighted)
-            Positioned(
-              top: 10,
-              right: 10,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade400,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.star, color: Colors.white, size: 14),
-                    SizedBox(width: 4),
-                    Text(
-                      'HOT TIP',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
+class _HomeScreenState extends State<HomeScreen> {
+  //   late String _currentTime;
+  // late String _timeOfDayIcon;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _updateTime();
+  //   Timer.periodic(const Duration(seconds: 1), (timer) {
+  //     if (mounted) {
+  //       setState(() {
+  //         _updateTime();
+  //       });
+  //     }
+  //   });
+  // }
+
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  // }
+
+  // void _updateTime() {
+  //   final now = DateTime.now();
+  //   _currentTime = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}";
+  //   _timeOfDayIcon = _getTimeOfDayIcon(now.hour);
+  // }
+
+  // String _getTimeOfDayIcon(int hour) {
+  //   if (hour >= 0 && hour < 12) return '🌅';
+  //   if (hour >= 12 && hour < 16) return '⛅';
+  //   return '🌙';
+  // }
+
+  
+
+  
 
   Widget _buildPremiumPreview() {
     return Container(
@@ -293,192 +186,162 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              Colors.grey.shade100,
-            ],
-          ),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            bottomRight: Radius.circular(20)
-          )
-        ),
-        child: CustomScrollView(
-          slivers: [
-                  SliverAppBar(
-            expandedHeight: 50, // Adjust based on your preference
-            floating: false,
-            pinned: true,
-            // title: Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   crossAxisAlignment: CrossAxisAlignment.center,
-            //   children: [
-            //     Row(
-            //       children: [
-            //         // Profile Circle Avatar
-            //         // CircleAvatar(
-            //         //   radius: 25,
-            //         //   backgroundColor: Colors.grey.shade300,
-            //         //   backgroundImage: const NetworkImage(
-            //         //     "https://d326fntlu7tb1e.cloudfront.net/uploads/bdec9d7d-0544-4fc4-823d-3b898f6dbbbf",
-            //         //   ),
-            //         // ),
-            //         const SizedBox(width: 12), // Space between avatar and text
-            //         Padding(
-            //           padding: const EdgeInsets.only(bottom: 6),
-            //           child: Column(
-            //             mainAxisAlignment: MainAxisAlignment.center,
-            //             crossAxisAlignment: CrossAxisAlignment.start,
-            //             children: [
-            //               // First line of text
-            //               const Text(
-            //                 "Deliver to",
-            //                 style: TextStyle(
-            //                   fontSize: 13,
-            //                   color: Colors.black, // Adjust based on your theme
-            //                   fontWeight: FontWeight.w600,
-            //                 ),
-            //               ),
-            //               // Second line of text (dynamic)
-            //               SizedBox(
-            //                 width: width * 0.65,
-            //                 child: const Text(
-            //                   "Hello there", // Replace with dynamic content if needed
-            //                   style: TextStyle(
-            //                     fontSize: 11,
-            //                     color: Colors.grey,
-            //                     fontWeight: FontWeight.normal,
-            //                   ),
-            //                   overflow: TextOverflow.ellipsis,
-            //                 ),
-            //               ),
-            //             ],
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ],
-            // ),
-            flexibleSpace: FlexibleSpaceBar(
-              // title: const Text(
-              //   "Pro betting tips available at 0743702820",
-              //   style: TextStyle(fontSize: 24, color: kLightWhite, fontWeight: FontWeight.bold),
-              // ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.blue.shade900,
-                      Colors.purple.shade900,
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
+      body: ScrollConfiguration(
+        behavior: MaterialScrollBehavior(),
+        child: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white,
+                  Colors.grey.shade100,
+                ],
+              ),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20))),
+          child: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                expandedHeight: 50,
+                floating: false,
+                pinned: true,
+                leading: IconButton(
+                  icon: Icon(Icons.menu, color: Colors.white),
+                  onPressed: () {
+                    // Add menu functionality here
+                  },
                 ),
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: ShaderMask(
-                        shaderCallback: (rect) {
-                          return LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.black, Colors.black.withOpacity(0)],
-                          ).createShader(rect);
-                        },
-                        blendMode: BlendMode.dstIn,
-                        child: Image.asset(
-                          'assets/betting2.png', // Replace with your asset path
-                          fit: BoxFit.cover,
-                        ),
+                actions: [
+                  IconButton(
+                    icon: Icon(Icons.qr_code_scanner, color: Colors.white),
+                    onPressed: () {
+                      // Add scanner functionality here
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.notifications, color: Colors.white),
+                    onPressed: () {
+                      // Add notifications functionality here
+                    },
+                  ),
+                  SizedBox(width: 2),
+                  // Add some padding at the end
+                ],
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.blue.shade900,
+                          Colors.purple.shade900,
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 5.0,
-                  horizontal: 12
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('free')  // Stream from Firestore collection
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return const Center(child: Text("Error fetching data"));
-                        } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                          return const Center(child: Text("No tips available"));
-                        } else {
-                          final List<Tip> freeTips = snapshot.data!.docs
-                              .map((doc) => Tip.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>)) // Assuming a Tip.fromFirestore constructor
-                              .toList();
-                          return Column(
-                            children: [
-                              RowWithButton(
-                                startText: "Free Hot Tips", buttonText: "More ...", onButtonPressed: () {
-                                
-                              },),
-                              SizedBox(height: 2,),
-                              SizedBox(
-                                height: 220,
-                                child: PageView.builder(
-                                  itemCount: freeTips.length,
-                                  scrollBehavior: MaterialScrollBehavior(),
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (context, index) {
-                                    return _buildTipCard(freeTips[index], true);
-                                  },
-                                  // child: _buildTipCard(freeTips[0], true)
-                                  ),
-                              ),
-                              const SizedBox(height: 16),
-                              _buildPremiumPreview(),
-                              const SizedBox(height: 6),
-                              //...freeTips.skip(1).map((tip) => _buildTipCard(tip, false)),
-                               RowWithButton(
-                                startText: "Daily Hot Tips", buttonText: "view ...", onButtonPressed: () {
-                                
-                              },),
-                              SizedBox(height: 10,),
-                              Container(
-                                height: 230,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20)
-                                  )
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: MatchTipsScreen(),
-                                ),
-                              )
-                            ],
-                          );
-                        }
-                      },
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: ShaderMask(
+                            shaderCallback: (rect) {
+                              return LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.black,
+                                  Colors.black.withOpacity(0)
+                                ],
+                              ).createShader(rect);
+                            },
+                            blendMode: BlendMode.dstIn,
+                            child: Image.asset(
+                              'assets/betting2.png',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ],
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5.0, horizontal: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection(
+                                'free') // Stream from Firestore collection
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return const Center(
+                                child: Text("Error fetching data"));
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.docs.isEmpty) {
+                            return const Center(child: Text("No tips available"));
+                          } else {
+                            final List<Tip> freeTips = snapshot.data!.docs
+                                .map((doc) => Tip.fromFirestore(doc
+                                    as DocumentSnapshot<
+                                        Map<String,
+                                            dynamic>>)) // Assuming a Tip.fromFirestore constructor
+                                .toList();
+                            return Column(
+                              children: [
+                                // RowWithButton(
+                                //   startText: "Free Hot Tips",
+                                //   buttonText: "More ...",
+                                //   onButtonPressed: () {},
+                                // ),
+                                SizedBox(
+                                  height: 2,
+                                ),
+                                CarouselWidget(tips: freeTips),
+                                _buildPremiumPreview(),
+                                const SizedBox(height: 6),
+                                //...freeTips.skip(1).map((tip) => _buildTipCard(tip, false)),
+                                RowWithButton(
+                                  startText: "Daily Hot Tips",
+                                  buttonText: "view ...",
+                                  onButtonPressed: () {},
+                                ),
+                                SizedBox(
+                                  height: 2,
+                                ),
+                                Container(
+                                  height: 230,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(20),
+                                          topRight: Radius.circular(20))),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: MatchTipsScreen(),
+                                  ),
+                                )
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
