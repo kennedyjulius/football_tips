@@ -48,7 +48,7 @@ class Tip {
       date: data['date'] ?? '',
       leagueName: data['league_name'] ?? '',
       message: data['message'] ?? '',
-      odds: data['odds'] ?? '',
+      odds: data['odds'] is double ? data['odds'].toString() : data['odds'] ?? '',
       results: data['results'] ?? '',
       status: data['status'] ?? '',
       team1: data['team_1'] ?? '',

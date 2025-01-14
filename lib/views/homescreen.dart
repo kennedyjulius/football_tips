@@ -10,6 +10,7 @@ import 'package:football_tips/common/custom_app_bar.dart';
 import 'package:football_tips/common/custom_rowbutton.dart';
 import 'package:football_tips/models/model_tips.dart';
 import 'package:football_tips/utils/app_constants.dart';
+import 'package:football_tips/views/gamecategory_screen.dart';
 import 'package:football_tips/views/marque_banner.dart';
 import 'dart:ui';
 
@@ -136,7 +137,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => GameCategoriesScreen(),));
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.amber,
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -304,6 +307,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //   buttonText: "More ...",
                                 //   onButtonPressed: () {},
                                 // ),
+                                // SizedBox(
+                                //   height: 50,
+                                //   child: CurvedOscillatingMarquee(text: "Call 0743702820")),
                                 SizedBox(
                                   height: 2,
                                 ),

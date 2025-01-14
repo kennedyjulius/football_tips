@@ -18,6 +18,7 @@ class RowWithButton extends StatelessWidget {
       padding: const EdgeInsets.all(8.0), // Adds some spacing around the row
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
+        
         mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space between elements
         children: [
           // Left text

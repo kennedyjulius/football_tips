@@ -27,7 +27,7 @@ class MatchTipsScreen extends StatelessWidget {
 
             return ListView.builder(
               scrollDirection: Axis.vertical,
-              padding: const EdgeInsets.all(0),
+              padding: const EdgeInsets.all(2),
               itemCount: tips.length,
               itemBuilder: (context, index) {
                 final tip = tips[index];
