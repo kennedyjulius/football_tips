@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:football_tips/models/model_tips.dart';
 import 'package:football_tips/services/firebase_firestore.dart';
+import 'package:football_tips/views/gamecategory_screen.dart';
 import 'package:football_tips/views/homescreen.dart';
 import 'package:football_tips/views/match_history_screen.dart';
 import 'package:football_tips/views/vipservices_screen.dart';
@@ -22,7 +23,8 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
   bool _isLoading = true;
   final List<Widget> _screens = [
     const HomeScreen(freeTips: [], isLoading: false,),
-    const PremiumFeaturesScreen(),
+    //const PremiumFeaturesScreen(),
+    const GameCategoriesScreen(),
     const HistoryScreen()
   ];
 
