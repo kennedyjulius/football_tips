@@ -5,7 +5,7 @@ import 'package:football_tips/common/tipcard_widget.dart';
 import 'package:football_tips/models/model_tips.dart';
 
 class GameCategoriesScreen extends StatefulWidget {
-  const GameCategoriesScreen({Key? key}) : super(key: key);
+  const GameCategoriesScreen({super.key});
 
   @override
   State<GameCategoriesScreen> createState() => _GameCategoriesScreenState();

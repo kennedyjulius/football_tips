@@ -9,7 +9,7 @@ import 'package:football_tips/models/model_tips.dart';
 class CarouselWidget extends StatefulWidget {
   final List<Tip> tips;
 
-  const CarouselWidget({Key? key, required this.tips}) : super(key: key);
+  const CarouselWidget({super.key, required this.tips});
 
   @override
   _CarouselWidgetState createState() => _CarouselWidgetState();

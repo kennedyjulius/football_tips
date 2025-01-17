@@ -6,11 +6,11 @@ class RowWithButton extends StatelessWidget {
   final VoidCallback onButtonPressed; // Callback when button is pressed
 
   const RowWithButton({
-    Key? key,
+    super.key,
     required this.startText,
     required this.buttonText,
     required this.onButtonPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

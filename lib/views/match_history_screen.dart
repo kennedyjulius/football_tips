@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_tips/models/model_tips.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -12,6 +13,9 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery ='';
+  bool _isSearching = false;
 
   final Map<String, String> _categories = {
     'all': 'All History',
@@ -29,13 +33,49 @@ class _HistoryScreenState extends State<HistoryScreen>
       length: _categories.length,
       vsync: this,
     );
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.toLowerCase();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _searchController.dispose();
+    _tabController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Betting History'),
+        title:  _isSearching ?  TextField(
+          controller: _searchController,
+          style: TextStyle(color: Colors.black),
+          decoration: InputDecoration(
+            //contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
+            hintText: "Search Matches here ...",
+            hintStyle: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+            border: InputBorder.none,
+          ),
+          autofocus: true,
+        ) : Text("Betting History"),
+        actions: [
+          IconButton(
+            icon: Icon(_isSearching ? Icons.close : Icons.search),
+            onPressed: () {
+              setState(() {
+                _isSearching = !_isSearching;
+                if (!_isSearching) {
+                  _searchController.clear();
+                }
+              });
+            },
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -79,8 +119,22 @@ class _HistoryScreenState extends State<HistoryScreen>
               },
             );
           }
+          
         },
+        
       );
+      
+    }
+   
+  }
+
+  bool _filterTip(Tip tip){
+    if (_searchQuery.isEmpty) return true; {
+      return tip.team1.toLowerCase().contains(_searchQuery) 
+      || tip.team2.toLowerCase().contains(_searchQuery)
+      || tip.leagueName.toLowerCase().contains(_searchQuery)
+      || tip.tipsName.toLowerCase().contains(_searchQuery);
+    
     }
   }
 
@@ -95,8 +149,14 @@ class _HistoryScreenState extends State<HistoryScreen>
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text("No data available"));
         } else {
-          final allTips = snapshot.data!;
+          final allTips = snapshot.data!.where((tip) => _filterTip(tip)).toList();
+
+          if (allTips.isEmpty && _searchQuery.isNotEmpty) {
+            return const Center(child: Text("No matches found"),);
+          
+          }
           return ListView.builder(
+            padding: EdgeInsets.all(8),
             itemCount: allTips.length,
             itemBuilder: (context, index) {
               return _buildHistoryItem(allTips[index]);
@@ -129,39 +189,71 @@ class _HistoryScreenState extends State<HistoryScreen>
     return allTips;
   }
 
-  Widget _buildHistoryItem(Tip tip) {
-    final bool isWin = tip.status == 'check'; // Assuming 'results' indicates win/loss
+   Widget _buildHistoryItem(Tip tip) {
+    final bool isWin = tip.status == 'check';
+    final resultColor = isWin ? Colors.green.shade100 : Colors.red.shade100;
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: ExpansionTile(
-        leading: CircleAvatar(
-          backgroundColor: isWin ? Colors.green : Colors.red,
-          child: Icon(
-            isWin ? Icons.check : Icons.close,
-            color: Colors.white,
-          ),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: isWin ? Colors.green.shade200 : Colors.red.shade200,
+          width: 1,
         ),
-        title: Text(
-          '${tip.team1} vs ${tip.team2}',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isWin ? Colors.green : Colors.red,
-          ),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          dividerColor: Colors.transparent,
         ),
-        subtitle: Text('${tip.date} • ${tip.leagueName}'),
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                _buildDetailRow('Prediction', tip.tipsName),
-                _buildDetailRow('Odds', tip.odds),
-                _buildDetailRow('Result', tip.results),
-              ],
+        child: ExpansionTile(
+          leading: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: resultColor,
+            ),
+            child: Icon(
+              isWin ? Icons.check : Icons.close,
+              color: isWin ? Colors.green : Colors.red,
             ),
           ),
-        ],
+          title: Text(
+            '${tip.team1} vs ${tip.team2}',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: isWin ? Colors.green.shade700 : Colors.red.shade700,
+            ),
+          ),
+          subtitle: Text(
+            '${tip.date} • ${tip.leagueName}',
+            style: TextStyle(
+              color: Colors.grey.shade600,
+              fontSize: 13,
+            ),
+          ),
+          childrenPadding: const EdgeInsets.all(16),
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  _buildDetailRow('Prediction', tip.tipsName),
+                  const Divider(height: 16),
+                  _buildDetailRow('Odds', tip.odds),
+                  const Divider(height: 16),
+                  _buildDetailRow('Result', tip.results),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -172,10 +264,10 @@ class _HistoryScreenState extends State<HistoryScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label),
+          Text(label, style: TextStyle(color: Colors.grey.shade600),),
           Text(
             value,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
         ],
       ),

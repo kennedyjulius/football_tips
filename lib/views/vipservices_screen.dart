@@ -271,7 +271,7 @@ class PremiumFeaturesScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '\$${price.toStringAsFixed(2)}/${duration}',
+                  '\$${price.toStringAsFixed(2)}/$duration',
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,

@@ -5,7 +5,7 @@ import 'dart:ui';
 import 'package:football_tips/models/matchtip_model.dart';
 
 class MatchTipsScreen extends StatelessWidget {
-  const MatchTipsScreen({Key? key}) : super(key: key);
+  const MatchTipsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

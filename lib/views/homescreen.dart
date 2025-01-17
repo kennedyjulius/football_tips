@@ -18,8 +18,7 @@ import 'package:football_tips/views/matchtip_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   // Constructor removed as we will be using StreamBuilder to fetch data.
-  const HomeScreen({Key? key, required List freeTips, required bool isLoading})
-      : super(key: key);
+  const HomeScreen({super.key, required List freeTips, required bool isLoading});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -130,7 +129,9 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildPremiumStat('95%', 'Success Rate'),
+                _buildDivider(),
                 _buildPremiumStat('50+', 'Tips/Month'),
+                _buildDivider(),
                 _buildPremiumStat('24/7', 'Support'),
               ],
             ),
@@ -148,13 +149,19 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             child: const Center(
-              child: Text(
-                'GET PREMIUM ACCESS',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+              child: Row(
+                children: [
+                  Text(
+                    'GET PREMIUM ACCESS',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: 8,),
+                  Icon(Icons.arrow_forward_rounded, size: 20,)
+                ],
               ),
             ),
           ),
@@ -352,4 +359,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+  
 }
+
+Widget _buildDivider() {
+    return Container(
+      height: 40,
+      width: 1,
+      color: Colors.white24,
+    );
+  }
