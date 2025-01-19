@@ -41,6 +41,7 @@ dependencies:
   flutter_staggered_animations: ^1.1.1
   flutter_timezone: ^4.0.0
   get_event_bus: ^1.0.0
+  google_nav_bar: ^5.0.7
 
 dev_dependencies:
   flutter_lints: ^5.0.0

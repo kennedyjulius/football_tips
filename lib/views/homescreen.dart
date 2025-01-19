@@ -15,6 +15,7 @@ import 'package:football_tips/views/marque_banner.dart';
 import 'dart:ui';
 
 import 'package:football_tips/views/matchtip_screen.dart';
+import 'package:football_tips/views/notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   // Constructor removed as we will be using StreamBuilder to fetch data.
@@ -24,7 +25,26 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
+
+  late AnimationController _sidebarController;
+  bool _isSidebarOpen = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+   @override
+  void initState() {
+    super.initState();
+    _sidebarController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _sidebarController.dispose();
+    super.dispose();
+  }
   //   late String _currentTime;
   // late String _timeOfDayIcon;
 
@@ -150,13 +170,17 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: const Center(
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'GET PREMIUM ACCESS',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'GET PREMIUM ACCESS',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
                     ),
                   ),
                   SizedBox(height: 8,),
@@ -196,6 +220,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: _buildSideNav(),
       body: ScrollConfiguration(
         behavior: MaterialScrollBehavior(),
         child: Container(
@@ -221,6 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: Icon(Icons.menu, color: Colors.white),
                   onPressed: () {
                     // Add menu functionality here
+                    _scaffoldKey.currentState?.openDrawer();
                   },
                 ),
                 actions: [
@@ -234,6 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icon(Icons.notifications, color: Colors.white),
                     onPressed: () {
                       // Add notifications functionality here
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => NotificationsScreen(),));
                     },
                   ),
                   SizedBox(width: 2),
@@ -324,26 +352,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 _buildPremiumPreview(),
                                 const SizedBox(height: 6),
                                 //...freeTips.skip(1).map((tip) => _buildTipCard(tip, false)),
-                                RowWithButton(
-                                  startText: "Daily Hot Tips",
-                                  buttonText: "view ...",
-                                  onButtonPressed: () {},
-                                ),
+                                // RowWithButton(
+                                //   startText: "Daily Hot Tips",
+                                //   buttonText: "view ...",
+                                //   onButtonPressed: () {},
+                                // ),
                                 SizedBox(
                                   height: 2,
                                 ),
-                                Container(
-                                  height: 230,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20))),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: MatchTipsScreen(),
-                                  ),
-                                )
+                                SizedBox(
+                                  height: 300,
+                                  child: MatchTipsScreen())
                               ],
                             );
                           }
@@ -367,5 +386,140 @@ Widget _buildDivider() {
       height: 40,
       width: 1,
       color: Colors.white24,
+    );
+  }
+
+    Widget _buildSideNav() {
+    return Container(
+      width: 280,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.indigo.shade900,
+            Colors.purple.shade900,
+          ],
+        ),
+      ),
+      child: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white.withOpacity(0.1),
+                    child: const Icon(Icons.person, color: Colors.white, size: 35),
+                  ),
+                  const SizedBox(width: 15),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Welcome',
+                          style: TextStyle(color: Colors.white70, fontSize: 14),
+                        ),
+                        Text(
+                          'Football Tips Pro',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(color: Colors.white24),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  _buildNavTile('Home', Icons.home, () {}),
+                  _buildNavTile('Premium Tips', Icons.diamond, () {}),
+                  _buildNavTile('My Predictions', Icons.analytics, () {}),
+                  _buildNavTile('Live Scores', Icons.sports_soccer, () {}),
+                  _buildNavTile('Statistics', Icons.bar_chart, () {}),
+                  _buildNavTile('Settings', Icons.settings, () {}),
+                  const Divider(color: Colors.white24),
+                  _buildNavTile('Help & Support', Icons.help, () {}),
+                  _buildNavTile('Rate Us', Icons.star, () {}),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.amber,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.diamond, color: Colors.black),
+                  ),
+                  const SizedBox(width: 15),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Go Premium',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Get exclusive tips',
+                          style: TextStyle(color: Colors.white70, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.arrow_forward, color: Colors.amber),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+    Widget _buildNavTile(String title, IconData icon, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.white70),
+      title: Text(
+        title,
+        style: const TextStyle(color: Colors.white, fontSize: 16),
+      ),
+      onTap: onTap,
+      trailing: icon == Icons.diamond
+          ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.amber,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                'PRO',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+          : null,
     );
   }

@@ -1,43 +1,33 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+
 import 'package:football_tips/models/model_tips.dart';
 import 'package:football_tips/services/firebase_firestore.dart';
 import 'package:football_tips/views/gamecategory_screen.dart';
 import 'package:football_tips/views/homescreen.dart';
 import 'package:football_tips/views/match_history_screen.dart';
-import 'package:football_tips/views/vipservices_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  const MainScreen({Key? key}) : super(key: key);
 
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin {
+class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  late TabController _tabController;
-    final TipService _tipService = TipService();
+  final TipService _tipService = TipService();
   List<Tip> _freeTips = [];
   bool _isLoading = true;
-  final List<Widget> _screens = [
-    const HomeScreen(freeTips: [], isLoading: false,),
-    //const PremiumFeaturesScreen(),
-    const GameCategoriesScreen(),
-    const HistoryScreen()
+
+  // Screens for each tab
+  final List<Widget> _pages = [
+    HomeScreen(freeTips: [], isLoading: false),
+    GameCategoriesScreen(),
+    HistoryScreen(),
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchTips();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-   
- 
-
-     Future<void> _fetchTips() async {
+  // Fetch tips data from the service
+  Future<void> _fetchTips() async {
     setState(() {
       _isLoading = true;
     });
@@ -49,46 +39,44 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       _isLoading = false;
     });
   }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchTips();
+  }
+
+  // Build the UI
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blue.shade900, Colors.purple.shade900],
+      body: _pages[_selectedIndex], // Show selected page
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
-        ),
-        child: ClipRRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: BottomNavigationBar(
-              currentIndex: _selectedIndex,
-              onTap: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-              backgroundColor: Colors.transparent,
-              selectedItemColor: Colors.white,
-              unselectedItemColor: Colors.white60,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home_rounded),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.diamond_rounded),
-                  label: 'VIP',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.history_rounded),
-                  label: 'History',
-                ),
-              ],
-            ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.diamond_outlined),
+            label: 'VIP',
           ),
-        ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'History',
+          ),
+        ],
+        backgroundColor: Colors.purple.shade900,
+        selectedItemColor: Colors.white, // Color of selected item
+        unselectedItemColor: Colors.grey, // Color of unselected items
+        showUnselectedLabels: true, // Display labels for unselected items
+        type: BottomNavigationBarType.fixed, // Fixes the tab width
       ),
     );
   }
