@@ -280,14 +280,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Column(
                   children: [
-                    SizedBox(height: 20.h),
-                    _buildWelcomeCard(),
-                    SizedBox(height: 25.h),
+                    SizedBox(height: 10.h),
+                    GestureDetector(
+                      onTap: () => MatchTipsScreen(),
+                      child: _buildWelcomeCard()),
+                    SizedBox(height: 15.h),
                     _buildQuickStats(),
-                    SizedBox(height: 25.h),
+                    SizedBox(height: 15.h),
+                    _buildDivider(),
+                    SizedBox(height: 15.h),
                     _buildFeaturedSection(),
-                    SizedBox(height: 25.h),
-                    _buildDailyTipsSection(),
+                    SizedBox(height: 15.h),
+                    //_buildDailyTipsSection(),
                   ],
                 ),
               ),
@@ -486,40 +490,40 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
     );
   }
 
-  Widget _buildDailyTipsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Daily Tips',
-          style: TextStyle(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        SizedBox(height: 16.h),
-        Container(
-          height: 500.h,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
-                blurRadius: 10,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(24.r),
-            child: MatchTipsScreen(),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildDailyTipsSection() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         'Daily Tips',
+  //         style: TextStyle(
+  //           fontSize: 20.sp,
+  //           fontWeight: FontWeight.bold,
+  //           color: Colors.black87,
+  //         ),
+  //       ),
+  //       SizedBox(height: 16.h),
+  //       Container(
+  //         height: 500.h,
+  //         decoration: BoxDecoration(
+  //           color: Colors.white,
+  //           borderRadius: BorderRadius.circular(24.r),
+  //           boxShadow: [
+  //             BoxShadow(
+  //               color: Colors.grey.withOpacity(0.1),
+  //               blurRadius: 10,
+  //               offset: Offset(0, 4),
+  //             ),
+  //           ],
+  //         ),
+  //         child: ClipRRect(
+  //           borderRadius: BorderRadius.circular(24.r),
+  //           child: MatchTipsScreen(),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
         
 Widget _buildDivider() {
