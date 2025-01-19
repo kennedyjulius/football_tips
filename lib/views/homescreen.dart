@@ -5,6 +5,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_tips/common/carousel_widget.dart';
 import 'package:football_tips/common/custom_app_bar.dart';
 import 'package:football_tips/common/custom_rowbutton.dart';
@@ -45,38 +46,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
     _sidebarController.dispose();
     super.dispose();
   }
-  //   late String _currentTime;
-  // late String _timeOfDayIcon;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _updateTime();
-  //   Timer.periodic(const Duration(seconds: 1), (timer) {
-  //     if (mounted) {
-  //       setState(() {
-  //         _updateTime();
-  //       });
-  //     }
-  //   });
-  // }
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  // }
-
-  // void _updateTime() {
-  //   final now = DateTime.now();
-  //   _currentTime = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}";
-  //   _timeOfDayIcon = _getTimeOfDayIcon(now.hour);
-  // }
-
-  // String _getTimeOfDayIcon(int hour) {
-  //   if (hour >= 0 && hour < 12) return '🌅';
-  //   if (hour >= 12 && hour < 16) return '⛅';
-  //   return '🌙';
-  // }
 
   
 
@@ -238,8 +208,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                   topLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20))),
           child: CustomScrollView(
-            slivers: [
-              SliverAppBar(
+          slivers: [
+             SliverAppBar(
                 expandedHeight: 50,
                 floating: false,
                 pinned: true,
@@ -305,82 +275,253 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                   ),
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5.0, horizontal: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection(
-                                'free') // Stream from Firestore collection
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return const Center(
-                                child: Text("Error fetching data"));
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.docs.isEmpty) {
-                            return const Center(child: Text("No tips available"));
-                          } else {
-                            final List<Tip> freeTips = snapshot.data!.docs
-                                .map((doc) => Tip.fromFirestore(doc
-                                    as DocumentSnapshot<
-                                        Map<String,
-                                            dynamic>>)) // Assuming a Tip.fromFirestore constructor
-                                .toList();
-                            return Column(
-                              children: [
-                                // RowWithButton(
-                                //   startText: "Free Hot Tips",
-                                //   buttonText: "More ...",
-                                //   onButtonPressed: () {},
-                                // ),
-                                // SizedBox(
-                                //   height: 50,
-                                //   child: CurvedOscillatingMarquee(text: "Call 0743702820")),
-                                SizedBox(
-                                  height: 2,
-                                ),
-                                CarouselWidget(tips: freeTips),
-                                _buildPremiumPreview(),
-                                const SizedBox(height: 6),
-                                //...freeTips.skip(1).map((tip) => _buildTipCard(tip, false)),
-                                // RowWithButton(
-                                //   startText: "Daily Hot Tips",
-                                //   buttonText: "view ...",
-                                //   onButtonPressed: () {},
-                                // ),
-                                SizedBox(
-                                  height: 2,
-                                ),
-                                SizedBox(
-                                  height: 300,
-                                  child: MatchTipsScreen())
-                              ],
-                            );
-                          }
-                        },
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Column(
+                  children: [
+                    SizedBox(height: 20.h),
+                    _buildWelcomeCard(),
+                    SizedBox(height: 25.h),
+                    _buildQuickStats(),
+                    SizedBox(height: 25.h),
+                    _buildFeaturedSection(),
+                    SizedBox(height: 25.h),
+                    _buildDailyTipsSection(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    )
+    );
+  }
+     
+
+
+  Widget _buildWelcomeCard() {
+    return Container(
+      padding: EdgeInsets.all(24.w),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.purple.shade800, Colors.deepPurple.shade900],
+        ),
+        borderRadius: BorderRadius.circular(24.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.purple.withOpacity(0.2),
+            blurRadius: 15,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                child: Icon(Icons.sports_soccer, color: Colors.white, size: 24.sp),
+              ),
+              SizedBox(width: 16.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Welcome Back!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      'Check today\'s expert predictions',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
-  
-}
 
+  Widget _buildQuickStats() {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildStatCard(
+            title: "Success Rate",
+            value: "92%",
+            icon: Icons.trending_up,
+            color: Colors.green,
+          ),
+        ),
+        SizedBox(width: 16.w),
+        Expanded(
+          child: _buildStatCard(
+            title: "Win Streak",
+            value: "7",
+            icon: Icons.local_fire_department,
+            color: Colors.orange,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatCard({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(8.w),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: Icon(icon, color: color, size: 20.sp),
+          ),
+          SizedBox(height: 12.h),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 24.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeaturedSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Featured Tips',
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: Text(
+                'View All',
+                style: TextStyle(
+                  color: Colors.purple.shade700,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 16.h),
+        StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('free').snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (!snapshot.hasData) {
+              return Center(child: Text('No tips available'));
+            }
+
+            final tips = snapshot.data!.docs
+                .map((doc) => Tip.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>))
+                .toList();
+
+            return CarouselWidget(tips: tips);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDailyTipsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Daily Tips',
+          style: TextStyle(
+            fontSize: 20.sp,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        SizedBox(height: 16.h),
+        Container(
+          height: 500.h,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24.r),
+            child: MatchTipsScreen(),
+          ),
+        ),
+      ],
+    );
+  }
+
+        
 Widget _buildDivider() {
     return Container(
       height: 40,
@@ -523,3 +664,4 @@ Widget _buildDivider() {
           : null,
     );
   }
+}

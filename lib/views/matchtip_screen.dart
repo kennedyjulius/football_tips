@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:ui';
-
 import 'package:football_tips/models/matchtip_model.dart';
 
 class MatchTipsScreen extends StatelessWidget {
@@ -26,7 +26,7 @@ class MatchTipsScreen extends StatelessWidget {
 
             return ListView.builder(
               scrollDirection: Axis.vertical,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               itemCount: tips.length,
               itemBuilder: (context, index) {
                 final tip = tips[index];
@@ -41,7 +41,7 @@ class MatchTipsScreen extends StatelessWidget {
 
   Widget _buildMatchTipCard(MatchTip tip) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
+      margin: EdgeInsets.only(bottom: 20.h),
       child: Stack(
         children: [
           Container(
@@ -54,25 +54,24 @@ class MatchTipsScreen extends StatelessWidget {
                   Colors.deepPurple.shade900,
                 ],
               ),
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(24.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
                   blurRadius: 15,
-                  offset: const Offset(0, 8),
+                  offset: Offset(0, 8.h),
                 ),
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(24.r),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(24.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // League and Date Row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -86,29 +85,28 @@ class MatchTipsScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10.h),
                       
-                      // Teams
                       Text(
                         '${tip.team1} vs ${tip.team2}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 22,
+                          fontSize: 22.sp,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.5,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10.h),
                       
-                      // Time and Tip Row
-                      Row(
+                      Wrap(
+                        spacing: 8.w,
+                        runSpacing: 8.h,
                         children: [
                           _buildInfoChip(
                             icon: Icons.access_time,
                             text: tip.time,
                             backgroundColor: Colors.black26,
                           ),
-                          const SizedBox(width: 2),
                           _buildInfoChip(
                             icon: Icons.tips_and_updates,
                             text: tip.tipsName,
@@ -116,34 +114,34 @@ class MatchTipsScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10.h),
                       
-                      // Odds and Status Row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 8.h,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(16.r),
                             ),
                             child: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.trending_up,
                                   color: Colors.amber,
-                                  size: 20,
+                                  size: 20.sp,
                                 ),
-                                const SizedBox(width: 8),
+                                SizedBox(width: 8.w),
                                 Text(
                                   'Odds: ${tip.odds}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 18,
+                                    fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -153,31 +151,30 @@ class MatchTipsScreen extends StatelessWidget {
                           _buildStatusChip(tip.status),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10.h),
                       
-                      // Results
                       if (tip.results.isNotEmpty) ...[
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.all(16.w),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(16.r),
                           ),
                           child: Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.sports_score,
                                 color: Colors.green,
-                                size: 24,
+                                size: 24.sp,
                               ),
-                              const SizedBox(width: 12),
+                              SizedBox(width: 12.w),
                               Expanded(
                                 child: Text(
                                   'Result: ${tip.results}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 16,
+                                    fontSize: 16.sp,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -203,10 +200,10 @@ class MatchTipsScreen extends StatelessWidget {
     Color? backgroundColor,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: backgroundColor ?? Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -214,14 +211,14 @@ class MatchTipsScreen extends StatelessWidget {
           Icon(
             icon,
             color: Colors.white70,
-            size: 16,
+            size: 16.sp,
           ),
-          const SizedBox(width: 6),
+          SizedBox(width: 6.w),
           Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -253,13 +250,13 @@ class MatchTipsScreen extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
+      padding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+        vertical: 8.h,
       ),
       decoration: BoxDecoration(
         color: statusColor.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
           color: statusColor.withOpacity(0.5),
           width: 1,
@@ -271,15 +268,15 @@ class MatchTipsScreen extends StatelessWidget {
           Icon(
             statusIcon,
             color: statusColor,
-            size: 18,
+            size: 18.sp,
           ),
-          const SizedBox(width: 6),
+          SizedBox(width: 6.w),
           Text(
             status,
             style: TextStyle(
               color: statusColor,
               fontWeight: FontWeight.bold,
-              fontSize: 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
