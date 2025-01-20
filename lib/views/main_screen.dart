@@ -7,7 +7,7 @@ import 'package:football_tips/views/homescreen.dart';
 import 'package:football_tips/views/match_history_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();

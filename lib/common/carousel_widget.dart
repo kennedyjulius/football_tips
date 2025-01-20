@@ -28,7 +28,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
             return _buildTipCard(widget.tips[index], index == _currentIndex);
           },
           options: CarouselOptions(
-            height: 220.h,
+            height: 260.h,
             viewportFraction: 0.92,
             autoPlay: true,
             autoPlayInterval: const Duration(seconds: 5),

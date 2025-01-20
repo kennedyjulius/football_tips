@@ -29,7 +29,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
 
   late AnimationController _sidebarController;
-  bool _isSidebarOpen = false;
+  final bool _isSidebarOpen = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
    @override
@@ -287,8 +287,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                     SizedBox(height: 15.h),
                     _buildQuickStats(),
                     SizedBox(height: 15.h),
-                    _buildDivider(),
-                    SizedBox(height: 15.h),
+                   // _buildDivider(),
+                    //SizedBox(height: 15.h),
                     _buildFeaturedSection(),
                     SizedBox(height: 15.h),
                     //_buildDailyTipsSection(),
