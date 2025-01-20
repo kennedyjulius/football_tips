@@ -503,7 +503,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
               .toList();
 
           return Container(
-            height: 220.h,
+            height: 280.h,
             child: CarouselSlider.builder(
               itemCount: tips.length,
               itemBuilder: (context, index, realIndex) {
@@ -511,14 +511,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                 return _buildTipCard(tip);
               },
               options: CarouselOptions(
-                height: 220.h,
+                height: 260.h,
                 enlargeCenterPage: true,
                 autoPlay: true,
                 autoPlayInterval: Duration(seconds: 5),
                 autoPlayAnimationDuration: Duration(milliseconds: 800),
                 autoPlayCurve: Curves.fastOutSlowIn,
                 enableInfiniteScroll: true,
-                viewportFraction: 0.85,
+                viewportFraction: 0.77,
               ),
             ),
           );
@@ -674,9 +674,9 @@ Widget _Chip({
 // Helper Function for Dynamic Status Color
 Color _getStatusColor(String status) {
   switch (status.toLowerCase()) {
-    case 'won':
+    case 'check':
       return Colors.green.withOpacity(0.2);
-    case 'lost':
+    case 'cross':
       return Colors.red.withOpacity(0.2);
     default:
       return Colors.orange.withOpacity(0.2);
@@ -783,57 +783,92 @@ Widget _buildDivider() {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  _buildNavTile('Home', Icons.home, () {}),
-                  _buildNavTile('Premium Tips', Icons.diamond, () {}),
-                  _buildNavTile('My Predictions', Icons.analytics, () {}),
-                  _buildNavTile('Live Scores', Icons.sports_soccer, () {}),
-                  _buildNavTile('Statistics', Icons.bar_chart, () {}),
+                  _buildNavTile('Home', Icons.home, () {
+                    Navigator.pop(context);
+                  }),
+                  _buildNavTile('Daily Tips', Icons.calendar_today, () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const DailyTipsScreen()),
+                    );
+                  }),
+                  _buildNavTile('Categories', Icons.category, () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => GameCategoriesScreen()),
+                    );
+                  }),
+                  _buildNavTile('Notifications', Icons.notifications, () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+                    );
+                  }),
                   _buildNavTile('Settings', Icons.settings, () {
+                    Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const SettingsScreen()),
                     );
                   }),
                   const Divider(color: Colors.white24),
-                  _buildNavTile('Help & Support', Icons.help, () {}),
-                  _buildNavTile('Rate Us', Icons.star, () {}),
+                  _buildNavTile('Help & Support', Icons.help, () {
+                    Navigator.pop(context);
+                    // Add help & support functionality
+                  }),
+                  _buildNavTile('Rate Us', Icons.star, () {
+                    Navigator.pop(context);
+                    // Add rate us functionality
+                  }),
                 ],
               ),
             ),
-            Container(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.amber,
-                      borderRadius: BorderRadius.circular(12),
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => GameCategoriesScreen()),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.diamond, color: Colors.black),
                     ),
-                    child: const Icon(Icons.diamond, color: Colors.black),
-                  ),
-                  const SizedBox(width: 15),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Go Premium',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                    const SizedBox(width: 15),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Go Premium',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Get exclusive tips',
-                          style: TextStyle(color: Colors.white70, fontSize: 14),
-                        ),
-                      ],
+                          Text(
+                            'Get exclusive tips',
+                            style: TextStyle(color: Colors.white70, fontSize: 14),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Icon(Icons.arrow_forward, color: Colors.amber),
-                ],
+                    const Icon(Icons.arrow_forward, color: Colors.amber),
+                  ],
+                ),
               ),
             ),
           ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_tips/models/model_tips.dart';
 import 'package:football_tips/common/tipcard_widget.dart';
 import 'package:football_tips/views/homescreen.dart';
@@ -35,30 +36,62 @@ class _DailyPredictionsScreenState extends State<DailyPredictionsScreen> {
   }
 
   Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.deepPurple,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+    decoration: BoxDecoration(
+      color: Colors.deepPurple,
+      borderRadius: BorderRadius.vertical(
+        bottom: Radius.circular(20.r),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          IconButton(onPressed: () => Navigator.of(context).pop(), icon: Icon(Icons.arrow_back_ios)),
-         
-          Text("Daily Predictions", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 24),)
-        ],
-      )
-      );
-    
-  }
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 6,
+          offset: Offset(0, 3),
+        ),
+      ],
+    ),
+    child: Row(
+      children: [
+        // Back Button with Improved Styling
+        IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.white,
+            size: 24.sp,
+          ),
+        ),
+        SizedBox(width: 12.w),
+        // Title Section
+        Expanded(
+          child: Text(
+            "Daily Predictions",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 20.sp,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        // Optional Right-Side Button (e.g., Settings or Notifications)
+        IconButton(
+          onPressed: () {
+            // Add your functionality here (e.g., settings or notifications)
+          },
+          icon: Icon(
+            Icons.notifications_none,
+            color: Colors.white,
+            size: 24.sp,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget _buildDateSelector() {
     return Container(
