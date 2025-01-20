@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Tip {
   final String date;
   final String leagueName;
-  final String message;
   final String odds;
   final String results;
   final String status;
@@ -15,7 +14,6 @@ class Tip {
   Tip({
     required this.date,
     required this.leagueName,
-    required this.message,
     required this.odds,
     required this.results,
     required this.status,
@@ -30,7 +28,6 @@ class Tip {
     return Tip(
       date: map['date'] ?? '',
       leagueName: map['league_name'] ?? '',
-      message: map['message'] ?? '',
       odds: map['odds'] ?? '',
       results: map['results'] ?? '',
       status: map['status'] ?? '',
@@ -47,7 +44,6 @@ class Tip {
     return Tip(
       date: data['date'] ?? '',
       leagueName: data['league_name'] ?? '',
-      message: data['message'] ?? '',
       odds: data['odds'] is double ? data['odds'].toString() : data['odds'] ?? '',
       results: data['results'] ?? '',
       status: data['status'] ?? '',
@@ -63,7 +59,6 @@ class Tip {
     return {
       'date': date,
       'league_name': leagueName,
-      'message': message,
       'odds': odds,
       'results': results,
       'status': status,

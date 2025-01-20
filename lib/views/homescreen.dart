@@ -1,22 +1,16 @@
-import 'dart:async';
-
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dots_indicator/dots_indicator.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:football_tips/common/carousel_widget.dart';
-import 'package:football_tips/common/custom_app_bar.dart';
-import 'package:football_tips/common/custom_rowbutton.dart';
-import 'package:football_tips/models/model_tips.dart';
-import 'package:football_tips/utils/app_constants.dart';
-import 'package:football_tips/views/gamecategory_screen.dart';
-import 'package:football_tips/views/marque_banner.dart';
 import 'dart:ui';
 
-import 'package:football_tips/views/matchtip_screen.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'package:football_tips/models/model_tips.dart';
+import 'package:football_tips/views/dailytips_screen.dart';
+import 'package:football_tips/views/gamecategory_screen.dart';
 import 'package:football_tips/views/notifications_screen.dart';
+import 'package:football_tips/views/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   // Constructor removed as we will be using StreamBuilder to fetch data.
@@ -282,7 +276,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                   children: [
                     SizedBox(height: 10.h),
                     GestureDetector(
-                      onTap: () => MatchTipsScreen(),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const DailyPredictionsScreen(),
+                        ),
+                      ),
                       child: _buildWelcomeCard()),
                     SizedBox(height: 15.h),
                     _buildQuickStats(),
@@ -442,53 +440,251 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
   }
 
   Widget _buildFeaturedSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Featured Tips',
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Header Section
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Featured Tips',
+            style: TextStyle(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          TextButton(
+            onPressed: () {},
+            child: Text(
+              'View All',
               style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: Colors.purple.shade700,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                'View All',
-                style: TextStyle(
-                  color: Colors.purple.shade700,
-                  fontWeight: FontWeight.w600,
-                ),
+          ),
+        ],
+      ),
+      SizedBox(height: 16.h),
+
+      // StreamBuilder to Fetch Data
+      StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('free').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.purple.shade700),
+              ),
+            );
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(
+              child: Column(
+                children: [
+                  Icon(Icons.sports_soccer, size: 48.sp, color: Colors.grey),
+                  SizedBox(height: 8.h),
+                  Text(
+                    'No tips available',
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 16.sp,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final tips = snapshot.data!.docs
+              .map((doc) => Tip.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>))
+              .toList();
+
+          return Container(
+            height: 220.h,
+            child: CarouselSlider.builder(
+              itemCount: tips.length,
+              itemBuilder: (context, index, realIndex) {
+                final tip = tips[index];
+                return _buildTipCard(tip);
+              },
+              options: CarouselOptions(
+                height: 220.h,
+                enlargeCenterPage: true,
+                autoPlay: true,
+                autoPlayInterval: Duration(seconds: 5),
+                autoPlayAnimationDuration: Duration(milliseconds: 800),
+                autoPlayCurve: Curves.fastOutSlowIn,
+                enableInfiniteScroll: true,
+                viewportFraction: 0.85,
               ),
             ),
-          ],
-        ),
-        SizedBox(height: 16.h),
-        StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('free').snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (!snapshot.hasData) {
-              return Center(child: Text('No tips available'));
-            }
+          );
+        },
+      ),
+    ],
+  );
+}
 
-            final tips = snapshot.data!.docs
-                .map((doc) => Tip.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>))
-                .toList();
-
-            return CarouselWidget(tips: tips);
-          },
+// Reusable Widget for Tip Card
+Widget _buildTipCard(Tip tip) {
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 8.w),
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Colors.purple.shade800,
+          Colors.deepPurple.shade900,
+        ],
+      ),
+      borderRadius: BorderRadius.circular(20.r),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.purple.withOpacity(0.2),
+          blurRadius: 10,
+          offset: Offset(0, 4),
         ),
       ],
-    );
+    ),
+    child: Padding(
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // League Name and Date
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _Chip(label: tip.leagueName),
+              Text(
+                tip.date,
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 12.sp,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.h),
+
+          // Teams and Match Time
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  '${tip.team1} vs ${tip.team2}',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              _Chip(label: tip.time),
+            ],
+          ),
+          SizedBox(height: 12.h),
+
+          // Prediction and Odds
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Prediction',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    tip.tipsName,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              _Chip(
+                label: 'Odds: ${tip.odds}',
+                backgroundColor: Colors.green.withOpacity(0.2),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.h),
+
+          // Status and Results
+          Row(
+            children: [
+              _Chip(
+                label: tip.status,
+                backgroundColor: _getStatusColor(tip.status),
+              ),
+              SizedBox(width: 8.w),
+              if (tip.results.isNotEmpty)
+                Text(
+                  'Result: ${tip.results}',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12.sp,
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+// Reusable Widget for Chips
+Widget _Chip({
+  required String label,
+  Color backgroundColor = Colors.white,
+}) {
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+    decoration: BoxDecoration(
+      color: backgroundColor.withOpacity(0.2),
+      borderRadius: BorderRadius.circular(20.r),
+    ),
+    child: Text(
+      label,
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 12.sp,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  );
+}
+
+// Helper Function for Dynamic Status Color
+Color _getStatusColor(String status) {
+  switch (status.toLowerCase()) {
+    case 'won':
+      return Colors.green.withOpacity(0.2);
+    case 'lost':
+      return Colors.red.withOpacity(0.2);
+    default:
+      return Colors.orange.withOpacity(0.2);
   }
+}
+
+
+ 
 
   // Widget _buildDailyTipsSection() {
   //   return Column(
@@ -592,7 +788,12 @@ Widget _buildDivider() {
                   _buildNavTile('My Predictions', Icons.analytics, () {}),
                   _buildNavTile('Live Scores', Icons.sports_soccer, () {}),
                   _buildNavTile('Statistics', Icons.bar_chart, () {}),
-                  _buildNavTile('Settings', Icons.settings, () {}),
+                  _buildNavTile('Settings', Icons.settings, () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                    );
+                  }),
                   const Divider(color: Colors.white24),
                   _buildNavTile('Help & Support', Icons.help, () {}),
                   _buildNavTile('Rate Us', Icons.star, () {}),
@@ -649,23 +850,6 @@ Widget _buildDivider() {
         style: const TextStyle(color: Colors.white, fontSize: 16),
       ),
       onTap: onTap,
-      trailing: icon == Icons.diamond
-          ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.amber,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Text(
-                'PRO',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
-          : null,
     );
   }
 }

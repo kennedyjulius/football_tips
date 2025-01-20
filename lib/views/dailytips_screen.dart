@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:football_tips/models/model_tips.dart';
 import 'package:football_tips/common/tipcard_widget.dart';
+import 'package:football_tips/views/homescreen.dart';
 import 'package:intl/intl.dart';
 
 class DailyPredictionsScreen extends StatefulWidget {
@@ -47,28 +48,21 @@ class _DailyPredictionsScreenState extends State<DailyPredictionsScreen> {
         ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          const Text(
-            'Daily Predictions',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
-            onPressed: () => setState(() {}),
-          ),
+          IconButton(onPressed: () => Navigator.of(context).pop(), icon: Icon(Icons.arrow_back_ios)),
+         
+          Text("Daily Predictions", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 24),)
         ],
-      ),
-    );
+      )
+      );
+    
   }
 
   Widget _buildDateSelector() {
     return Container(
-      height: 80,
+      height: 100,
       padding: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -96,7 +90,7 @@ class _DailyPredictionsScreenState extends State<DailyPredictionsScreen> {
                 onTap: () => setState(() => selectedDate = date),
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
-                  width: 60,
+                  width: 70,
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
                     color: isSelected ? Colors.deepPurple : Colors.transparent,
@@ -136,10 +130,12 @@ class _DailyPredictionsScreenState extends State<DailyPredictionsScreen> {
   }
 
   Widget _buildPredictionsList() {
+    final formattedDate = DateFormat('dd/MM/yyyy').format(selectedDate);
+    
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
-          .collection('tips')
-          .where('date', isEqualTo: DateFormat('yyyy-MM-dd').format(selectedDate))
+          .collection('daily')
+          .where('date', isEqualTo: formattedDate)
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
