@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_tips/models/model_tips.dart';
 import 'package:football_tips/common/tipcard_widget.dart';
 import 'package:football_tips/views/homescreen.dart';
+import 'package:football_tips/views/notifications_screen.dart';
 import 'package:intl/intl.dart';
 
 class DailyPredictionsScreen extends StatefulWidget {
@@ -80,6 +81,7 @@ class _DailyPredictionsScreenState extends State<DailyPredictionsScreen> {
         IconButton(
           onPressed: () {
             // Add your functionality here (e.g., settings or notifications)
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => NotificationsScreen(),));
           },
           icon: Icon(
             Icons.notifications_none,

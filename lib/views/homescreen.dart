@@ -3,14 +3,17 @@ import 'dart:ui';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:football_tips/models/model_tips.dart';
+import 'package:football_tips/views/contact_support_screen.dart';
 import 'package:football_tips/views/dailytips_screen.dart';
 import 'package:football_tips/views/gamecategory_screen.dart';
 import 'package:football_tips/views/notifications_screen.dart';
 import 'package:football_tips/views/settings_screen.dart';
+import 'package:football_tips/views/vipservices_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   // Constructor removed as we will be using StreamBuilder to fetch data.
@@ -215,12 +218,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                   },
                 ),
                 actions: [
-                  IconButton(
-                    icon: Icon(Icons.qr_code_scanner, color: Colors.white),
-                    onPressed: () {
-                      // Add scanner functionality here
-                    },
-                  ),
+                  
                   IconButton(
                     icon: Icon(Icons.notifications, color: Colors.white),
                     onPressed: () {
@@ -347,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                     ),
                     SizedBox(height: 4.h),
                     Text(
-                      'Check today\'s expert predictions',
+                      'Click here to Check today\'s expert predictions',
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 14.sp,
@@ -502,7 +500,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
               .map((doc) => Tip.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>))
               .toList();
 
-          return Container(
+          return SizedBox(
             height: 280.h,
             child: CarouselSlider.builder(
               itemCount: tips.length,
@@ -790,7 +788,14 @@ Widget _buildDivider() {
                     Navigator.pop(context);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const DailyTipsScreen()),
+                      MaterialPageRoute(builder: (context) => const DailyPredictionsScreen()),
+                    );
+                  }),
+                  _buildNavTile('Premium Packages', Icons.diamond_outlined, () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const PremiumFeaturesScreen()),
                     );
                   }),
                   _buildNavTile('Categories', Icons.category, () {
@@ -817,11 +822,16 @@ Widget _buildDivider() {
                   const Divider(color: Colors.white24),
                   _buildNavTile('Help & Support', Icons.help, () {
                     Navigator.pop(context);
-                    // Add help & support functionality
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ContactSupportScreen()),
+                    );
                   }),
-                  _buildNavTile('Rate Us', Icons.star, () {
-                    Navigator.pop(context);
-                    // Add rate us functionality
+                  _buildNavTile('Privacy Policy', Icons.privacy_tip, () {
+                   // Navigator.pop(context);
+                    // Add privacy policy functionality
+                    _launchInBrowser(
+                    "https://www.freeprivacypolicy.com/live/673fdfed-64e1-4ac2-aa28-7524442157ce");
                   }),
                 ],
               ),
@@ -886,5 +896,15 @@ Widget _buildDivider() {
       ),
       onTap: onTap,
     );
+  }
+
+  Future<void> _launchInBrowser(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw Exception('Could not launch $url');
+    }
   }
 }
