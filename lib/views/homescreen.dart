@@ -1,10 +1,10 @@
-import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:football_tips/views/match_history_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:football_tips/models/model_tips.dart';
@@ -454,7 +454,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
             ),
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () =>Navigator.of(context).push(MaterialPageRoute(builder: (context) => HistoryScreen(),)),
             child: Text(
               'View All',
               style: TextStyle(
@@ -798,7 +798,7 @@ Widget _buildDivider() {
                       MaterialPageRoute(builder: (context) => const PremiumFeaturesScreen()),
                     );
                   }),
-                  _buildNavTile('Categories', Icons.category, () {
+                  _buildNavTile('VIP Categories', Icons.category, () {
                     Navigator.pop(context);
                     Navigator.push(
                       context,
@@ -831,7 +831,7 @@ Widget _buildDivider() {
                    // Navigator.pop(context);
                     // Add privacy policy functionality
                     _launchInBrowser(
-                    "https://www.freeprivacypolicy.com/live/673fdfed-64e1-4ac2-aa28-7524442157ce");
+                    "https://www.freeprivacypolicy.com/live/96b2a6c3-8975-4dd4-9c92-b66f96cfd7c1");
                   }),
                 ],
               ),

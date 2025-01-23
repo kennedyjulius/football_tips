@@ -6,6 +6,7 @@ import 'package:football_tips/views/dailytips_screen.dart';
 import 'package:football_tips/views/main_screen.dart';
 
 import 'package:football_tips/views/matchtip_screen.dart';
+import 'package:football_tips/views/splash_screen.dart';
 
 Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(
@@ -28,12 +29,12 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
+          title: 'Football Tips App',
           theme: ThemeData(
             // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          home: MainScreen(),
+          home: SplashScreen(),
         );
       },
     );

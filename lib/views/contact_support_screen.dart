@@ -71,7 +71,7 @@ class ContactSupportScreen extends StatelessWidget {
               icon: Icons.email,
               title: 'Email',
               subtitle: 'Send us an email',
-              onTap: () => _launchUrl('kennedymutugi111@gmail.com'), // Replace with your email
+              onTap: () => _launchUrl('mailto:kennedymutugi111@gmail.com'), // Replace with your email
               color: Colors.red,
             ),
             

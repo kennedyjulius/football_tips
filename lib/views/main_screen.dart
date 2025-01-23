@@ -25,9 +25,8 @@ class _MainScreenState extends State<MainScreen> {
   // Screens for each tab
   final List<Widget> _pages = [
     HomeScreen(freeTips: [], isLoading: false),
-    DailyPredictionsScreen(),
-    
     GameCategoriesScreen(),
+    HistoryScreen(),
    
   ];
 
